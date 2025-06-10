@@ -31,7 +31,7 @@ def ask(
         enable_background_investigation: If True, performs web search before planning to enhance context
     """
     asyncio.run(
-        run_agent_workflow_async(
+        run_agent_workflow_async(#启动工作流
             user_input=question,
             debug=debug,
             max_plan_iterations=max_plan_iterations,
@@ -55,6 +55,7 @@ def main(
         max_plan_iterations: Maximum number of plan iterations
         max_step_num: Maximum number of steps in a plan
     """
+    # inquirer 是一个用于命令行下交互式选择的库，可以方便地实现选择、输入等功能
     # First select language
     language = inquirer.select(
         message="Select language / 选择语言:",
@@ -98,35 +99,36 @@ def main(
 
 if __name__ == "__main__":
     # Set up argument parser
-    parser = argparse.ArgumentParser(description="Run the Deer")
-    parser.add_argument("query", nargs="*", help="The query to process")
+    parser = argparse.ArgumentParser(description="Run the Deer")#新建一个参数解析器
+    parser.add_argument("query", nargs="*", help="The query to process")#这里的*是正则表达式，表示可以有多个参数，返回一个列表
     parser.add_argument(
         "--interactive",
         action="store_true",
         help="Run in interactive mode with built-in questions",
-    )
+    )  # --表示可选参数，action用来指定当命令行中出现这个选项时，应该如何处理
+    # 后续parser.parse_args()的时候，args.interactive 就会自动变成 True
     parser.add_argument(
         "--max_plan_iterations",
         type=int,
         default=1,
         help="Maximum number of plan iterations (default: 1)",
-    )
+    )#最多计划几轮
     parser.add_argument(
         "--max_step_num",
         type=int,
         default=3,
         help="Maximum number of steps in a plan (default: 3)",
-    )
+    )#生成报告的时候，最多几步
     parser.add_argument("--debug", action="store_true", help="Enable debug logging")
     parser.add_argument(
         "--no-background-investigation",
         action="store_false",
         dest="enable_background_investigation",
         help="Disable background investigation before planning",
-    )
+    )#是否启用背景调查，这会让智能体消耗更多的token
 
     args = parser.parse_args()
-
+    # 如果args.interactive为True，则调用main函数，否则调用ask函数
     if args.interactive:
         # Pass command line arguments to main function
         main(

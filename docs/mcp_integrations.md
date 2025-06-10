@@ -2,6 +2,8 @@
 
 ## Example of MCP Server Configuration
 
+这里是一个整体的模板
+
 ```json
 {
   "mcpServers": {

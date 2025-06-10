@@ -20,7 +20,7 @@ def enable_debug_logging():
 logger = logging.getLogger(__name__)
 
 # Create the graph
-graph = build_graph()
+graph = build_graph()#构建图
 
 
 async def run_agent_workflow_async(
@@ -75,19 +75,22 @@ async def run_agent_workflow_async(
         "recursion_limit": 100,
     }
     last_message_cnt = 0
+    # s代表工作流执行过程中的一次“全局状态快照”，每次状态快照都会包含当前的messages等信息
+    # 这里会自动、持续地监听和处理工作流的每一步输出，直到整个流程结束为止
     async for s in graph.astream(
         input=initial_state, config=config, stream_mode="values"
     ):
         try:
             if isinstance(s, dict) and "messages" in s:
-                if len(s["messages"]) <= last_message_cnt:
+                if len(s["messages"]) <= last_message_cnt:#说明没有新消息，跳过
                     continue
                 last_message_cnt = len(s["messages"])
-                message = s["messages"][-1]
+                message = s["messages"][-1]#获取最新消息
+                # 打印消息
                 if isinstance(message, tuple):
                     print(message)
                 else:
-                    message.pretty_print()
+                    message.pretty_print()#美化消息
             else:
                 # For any other output format
                 print(f"Output: {s}")
